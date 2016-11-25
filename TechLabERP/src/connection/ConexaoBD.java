@@ -47,7 +47,7 @@ public class ConexaoBD {
         }
     }
     
-    public static void closeConnection(Connection con, PreparedStatement stmt){
+    public static void closeConnection(Connection con, Statement stmt){
         closeConnection(con);
         try{
             if(stmt!=null){
@@ -58,12 +58,12 @@ public class ConexaoBD {
         }
     }
     
-    public static void closeConnection(Connection con, PreparedStatement stmt, ResultSet rs){
+    public static void closeConnection(Connection con, Statement st, ResultSet rs){
         closeConnection(con);
-        closeConnection(con, stmt);
+        closeConnection(con, st);
         try{
             if(rs!=null){
-                stmt.close();
+                st.close();
             }
         }catch(SQLException ex){
             Logger.getLogger(ConexaoBD.class.getName()).log(Level.SEVERE, null, ex);

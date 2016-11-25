@@ -44,6 +44,8 @@ public class TelaLogin extends javax.swing.JFrame {
 
         jLabel2.setText("Senha");
 
+        jButtonEntrar.setBackground(new java.awt.Color(0, 0, 0));
+        jButtonEntrar.setForeground(new java.awt.Color(0, 255, 51));
         jButtonEntrar.setText("Entrar");
         jButtonEntrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -60,12 +62,12 @@ public class TelaLogin extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(109, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButtonEntrar)
                     .addComponent(jPasswordSenhaLogin)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextLogin)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonEntrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(100, 100, 100))
         );
         layout.setVerticalGroup(
@@ -94,6 +96,11 @@ public class TelaLogin extends javax.swing.JFrame {
         
         if(jTextLogin.getText().equals("Junior")&&jPasswordSenhaLogin.getText().equals("123")){
             JOptionPane.showMessageDialog(null, "Bem Vindo!");
+            TelaPrincipal tp = new TelaPrincipal();
+            TelaLogin tl = new TelaLogin();
+            tp.setVisible(true);
+            this.dispose();
+            
         }else{
             JOptionPane.showMessageDialog(null, "Acesso negado.");
         }

@@ -20,6 +20,7 @@ public class JIFCadastroCategorias extends javax.swing.JInternalFrame {
     public JIFCadastroCategorias() {
         initComponents();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

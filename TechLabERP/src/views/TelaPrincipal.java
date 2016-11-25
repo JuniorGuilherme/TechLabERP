@@ -21,7 +21,6 @@ import javax.swing.DefaultComboBoxModel;
 public class TelaPrincipal extends javax.swing.JFrame {
     
     ConexaoBD bd = new ConexaoBD();
-    JIFCadastroProdutos cp = new JIFCadastroProdutos();
     
     /**
      * Creates new form Aplicacao
@@ -74,6 +73,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu2.setText("Estoque");
 
         jMenuItem4.setText("Inserir Lote");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem4);
 
         jMenuBar1.add(jMenu2);
@@ -138,6 +142,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jDesktopPane1.add(telaCadastroCategorias);
         telaCadastroCategorias.setVisible(true);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        JIFCadastroLote cl = new JIFCadastroLote();
+        jDesktopPane1.add(cl);
+        cl.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
