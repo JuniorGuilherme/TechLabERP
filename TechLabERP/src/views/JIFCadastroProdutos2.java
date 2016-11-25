@@ -6,30 +6,25 @@
 package views;
 
 import connection.ConexaoBD;
+import java.awt.Component;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import model.bean.Produto;
 import model.dao.ProdutoDAO;
 
 /**
  *
- * @author jrg_c
+ * @author Junior Guilherme
  */
-public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
+public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
 
     /**
-     * Creates new form JIFCadastroProdutos
+     * Creates new form JIFCadastroProdutos2
      */
-    ConexaoBD bd = new ConexaoBD();
-    public JIFCadastroProdutos() {
+    public JIFCadastroProdutos2() {
         initComponents();
         carregarComboBox();
     }
@@ -51,7 +46,6 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Erro ao carregar combo box.");
         }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -61,19 +55,20 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        
+        jLabel3 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jButtonSalvar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButtonCancelarCP = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTextNomeProduto = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jButtonAtualizarCbCategoria = new javax.swing.JButton();
+        jButtonNovaCategoria = new javax.swing.JButton();
         jTextCategoria = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
 
         setClosable(true);
+
+        jLabel3.setText("Categoria");
 
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -100,16 +95,12 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
 
         jLabel2.setText("Categoria");
 
-        jButtonAtualizarCbCategoria.setText("Atualizar");
-        jButtonAtualizarCbCategoria.addActionListener(new java.awt.event.ActionListener() {
+        jButtonNovaCategoria.setText("Adicionar Categoria");
+        jButtonNovaCategoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAtualizarCbCategoriaActionPerformed(evt);
+                jButtonNovaCategoriaActionPerformed(evt);
             }
         });
-
-        jLabel3.setText("Categoria");
-
-
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -120,7 +111,7 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButtonCancelarCP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                         .addComponent(jButton2)
                         .addGap(77, 77, 77)
                         .addComponent(jButtonSalvar))
@@ -135,7 +126,7 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonAtualizarCbCategoria)
+                                .addComponent(jButtonNovaCategoria)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jTextCategoria))))
                 .addContainerGap())
@@ -150,13 +141,13 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jButtonAtualizarCbCategoria)
+                    .addComponent(jButtonNovaCategoria)
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSalvar)
                     .addComponent(jButton2)
@@ -164,20 +155,14 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonAtualizarCbCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAtualizarCbCategoriaActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jButtonAtualizarCbCategoriaActionPerformed
-
     private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
-        
+
         Produto p = new Produto();
         ProdutoDAO dao = new ProdutoDAO();
-        
+
         p.setNome(jTextNomeProduto.getText());
         p.setCategoria(jTextCategoria.getText());
         dao.create(p);
@@ -185,26 +170,32 @@ public class JIFCadastroProdutos extends javax.swing.JInternalFrame {
         jTextCategoria.setText("");
     }//GEN-LAST:event_jButtonSalvarActionPerformed
 
-    private void jButtonCancelarCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarCPActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_jButtonCancelarCPActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         Produto p = new Produto();
         ProdutoDAO dao = new ProdutoDAO();
-        
+
         p.setNome(jTextNomeProduto.getText());
         p.setCategoria(jTextCategoria.getText());
         dao.create(p);
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButtonCancelarCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarCPActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButtonCancelarCPActionPerformed
+
+    private void jButtonNovaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovaCategoriaActionPerformed
+        // TODO add your handling code here:
+           JIFCadastroCategorias cc = new JIFCadastroCategorias();
+           cc.setVisible(true);
+    }//GEN-LAST:event_jButtonNovaCategoriaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButtonAtualizarCbCategoria;
     private javax.swing.JButton jButtonCancelarCP;
+    private javax.swing.JButton jButtonNovaCategoria;
     private javax.swing.JButton jButtonSalvar;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
