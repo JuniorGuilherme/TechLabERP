@@ -11,7 +11,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import javafx.scene.control.ComboBox;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListCellRenderer;
+import model.bean.Categoria;
 import model.bean.Produto;
 import model.dao.ProdutoDAO;
 
@@ -19,7 +27,7 @@ import model.dao.ProdutoDAO;
  *
  * @author Junior Guilherme
  */
-public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
+public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form JIFCadastroProdutos2
@@ -36,9 +44,13 @@ public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
         try {
             jComboBox1.addItem("");
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT descricao from categoria order by descricao asc");
+            ResultSet rs = st.executeQuery("SELECT id, descricao from categoria order by descricao asc");
+            
             while(rs.next()){
-                jComboBox1.addItem(rs.getString("descricao"));
+                Categoria c = new Categoria();
+                c.setDescricao(rs.getString(2));
+                c.setId(rs.getInt(1));
+                jComboBox1.addItem(c.toString());
             }
             ConexaoBD.closeConnection(con, st, rs);
             
@@ -69,6 +81,12 @@ public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
         setClosable(true);
 
         jLabel3.setText("Categoria");
+
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jButtonSalvar.setText("Salvar");
         jButtonSalvar.addActionListener(new java.awt.event.ActionListener() {
@@ -164,7 +182,10 @@ public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
         ProdutoDAO dao = new ProdutoDAO();
 
         p.setNome(jTextNomeProduto.getText());
-        p.setCategoria(jTextCategoria.getText());
+        Categoria c = new Categoria();
+        c = (Categoria) jComboBox1.getSelectedItem();
+        int id = c.getId();
+        p.setidCategoria(id);
         dao.create(p);
         jTextNomeProduto.setText("");
         jTextCategoria.setText("");
@@ -172,12 +193,12 @@ public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        Produto p = new Produto();
-        ProdutoDAO dao = new ProdutoDAO();
+       // Produto p = new Produto();
+       // ProdutoDAO dao = new ProdutoDAO();
 
-        p.setNome(jTextNomeProduto.getText());
-        p.setCategoria(jTextCategoria.getText());
-        dao.create(p);
+       // p.setNome(jTextNomeProduto.getText());
+       // p.setCategoria(jTextCategoria.getText());
+       // dao.create(p);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButtonCancelarCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarCPActionPerformed
@@ -190,6 +211,10 @@ public class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
            JIFCadastroCategorias cc = new JIFCadastroCategorias();
            cc.setVisible(true);
     }//GEN-LAST:event_jButtonNovaCategoriaActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
