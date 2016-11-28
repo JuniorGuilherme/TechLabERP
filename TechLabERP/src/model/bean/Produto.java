@@ -10,8 +10,8 @@ package model.bean;
  * @author Junior Guilherme
  */
 public class Produto {
-    private String nome, categoria;
-    private int id;
+    private String nome;
+    private int id, idCategoria;
 
     public String getNome() {
         return nome;
@@ -21,14 +21,6 @@ public class Produto {
         this.nome = nome;
     }
 
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
     public int getId() {
         return id;
     }
@@ -36,6 +28,13 @@ public class Produto {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
+    public void setidCategoria(int id){
+        this.idCategoria = id;
+    }
+    public int getIdCategoria(){
+        return idCategoria;
+    }
+    public String toString(){
+        return nome;
+    }
 }

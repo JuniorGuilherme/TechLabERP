@@ -8,6 +8,7 @@ package views;
 import connection.ConexaoBD;
 import java.awt.Component;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ListCellRenderer;
 import model.bean.Categoria;
 import model.bean.Produto;
+import model.dao.CategoriaDAO;
 import model.dao.ProdutoDAO;
 
 /**
@@ -34,30 +36,12 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
      */
     public JIFCadastroProdutos2() {
         initComponents();
-        carregarComboBox();
-    }
-    
-    public void carregarComboBox(){
-        Connection con = ConexaoBD.getConnection();
-        
-        
-        try {
-            jComboBox1.addItem("");
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT id, descricao from categoria order by descricao asc");
-            
-            while(rs.next()){
-                Categoria c = new Categoria();
-                c.setDescricao(rs.getString(2));
-                c.setId(rs.getInt(1));
-                jComboBox1.addItem(c.toString());
-            }
-            ConexaoBD.closeConnection(con, st, rs);
-            
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao carregar combo box.");
+        CategoriaDAO dao = new CategoriaDAO();
+        for(Categoria c: dao.read()){
+            jComboBox1.addItem(c);
         }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -182,10 +166,9 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
         ProdutoDAO dao = new ProdutoDAO();
 
         p.setNome(jTextNomeProduto.getText());
-        Categoria c = new Categoria();
-        c = (Categoria) jComboBox1.getSelectedItem();
-        int id = c.getId();
-        p.setidCategoria(id);
+        Categoria c = (Categoria) jComboBox1.getSelectedItem();
+        p.setidCategoria(c.getId());
+        JOptionPane.showMessageDialog(null, "ID: "+p.getIdCategoria()+"  DESC: "+p.getNome());
         dao.create(p);
         jTextNomeProduto.setText("");
         jTextCategoria.setText("");
@@ -222,7 +205,7 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButtonCancelarCP;
     private javax.swing.JButton jButtonNovaCategoria;
     private javax.swing.JButton jButtonSalvar;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<Object> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

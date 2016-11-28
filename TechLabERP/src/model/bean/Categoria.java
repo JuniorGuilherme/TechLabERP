@@ -10,9 +10,10 @@ package model.bean;
  * @author Junior Guilherme
  */
 public class Categoria {
-    String descricao;
-    int id;
-
+    public String descricao;
+    public int id;
+   
+    
     public String getDescricao() {
         return descricao;
     }
@@ -28,6 +29,7 @@ public class Categoria {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
+    public String toString(){
+        return this.descricao;
+    }
 }
