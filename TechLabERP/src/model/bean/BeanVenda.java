@@ -13,7 +13,7 @@ public class BeanVenda {
     String Data;
     int qtd;
     double valor;
-    int idProduto, idVenda;
+    int idProduto, id;
 
     public String getData() {
         return Data;
@@ -47,12 +47,12 @@ public class BeanVenda {
         this.idProduto = idProduto;
     }
 
-    public int getIdVenda() {
-        return idVenda;
+    public int getId() {
+        return id;
     }
 
-    public void setIdVenda(int idVenda) {
-        this.idVenda = idVenda;
+    public void setId(int id) {
+        this.id = id;
     }
     
 }

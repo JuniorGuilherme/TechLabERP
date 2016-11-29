@@ -26,9 +26,11 @@ public class DaoVenda {
         Connection con = ConexaoBD.getConnection();
         PreparedStatement stmt = null;
         try {
-            stmt = con.prepareStatement("insert into venda_itens(idProduto, valor, qtd) values (?,?,?)");
+            stmt = con.prepareStatement("insert into venda (id_produto, valor, qtd, data_venda) values (?,?,?,?);");
             stmt.setInt(1, v.getIdProduto());
             stmt.setDouble(2, v.getValor());
+            stmt.setInt(3, v.getQtd());
+            stmt.setString(4, v.getData());
             
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Salvo com sucesso.");
@@ -49,10 +51,12 @@ public class DaoVenda {
             rs = stmt.executeQuery();
             
             while(rs.next()){
-                Venda v = new Produto();
-                v.setNome(rs.getString("nome"));
-                p.setId(rs.getInt("id"));
-                list.add(p);
+                BeanVenda v = new BeanVenda();
+                v.setIdProduto(rs.getInt("id_produto"));
+                v.setQtd(rs.getInt("qtd"));
+                v.setData(rs.getString("data_venda"));
+                v.setValor(rs.getDouble("valor"));
+                list.add(v);
                 
             }
         } catch (Exception e) {

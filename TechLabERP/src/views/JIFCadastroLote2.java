@@ -10,7 +10,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import model.bean.Produto;
 
 /**
  *
@@ -29,6 +31,8 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     public void carregarComboBoxProduto(){
         jComboBox1.addItem("Selecione");
         Connection con = ConexaoBD.getConnection();
+        ArrayList<Produto> pList = new ArrayList<>();
+        Produto p = new Produto();
         try {
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery("select nome from produto order by nome asc;");

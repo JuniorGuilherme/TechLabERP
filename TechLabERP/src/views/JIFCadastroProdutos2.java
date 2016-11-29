@@ -172,6 +172,7 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
         dao.create(p);
         jTextNomeProduto.setText("");
         jTextCategoria.setText("");
+        TelaPrincipal.cbProduto.addItem(p);
     }//GEN-LAST:event_jButtonSalvarActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
