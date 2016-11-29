@@ -10,9 +10,33 @@ package model.bean;
  * @author Junior Guilherme
  */
 public class BeanVenda {
-    String Data;
+    String Data, nomeProduto;
+
+    public String getNomeProduto() {
+        return nomeProduto;
+    }
+
+    public void setNomeProduto(String nomeProduto) {
+        this.nomeProduto = nomeProduto;
+    }
     int qtd;
-    double valor;
+    double valor, custo, lucro;
+
+    public double getCusto() {
+        return custo;
+    }
+
+    public void setCusto(double custo) {
+        this.custo = custo;
+    }
+
+    public double getLucro() {
+        return lucro;
+    }
+
+    public void setLucro(double lucro) {
+        this.lucro = lucro;
+    }
     int idProduto, id;
 
     public String getData() {

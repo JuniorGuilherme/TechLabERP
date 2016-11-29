@@ -58,7 +58,7 @@ public class ProdutoDAO {
                 
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao ler.");
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, stmt, rs);
         }

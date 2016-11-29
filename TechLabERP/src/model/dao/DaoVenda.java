@@ -47,7 +47,7 @@ public class DaoVenda {
         List<BeanVenda> list = new ArrayList<>();
         
         try {
-            stmt = con.prepareStatement("select * from produto");
+            stmt = con.prepareStatement("select * from venda;");
             rs = stmt.executeQuery();
             
             while(rs.next()){
@@ -56,11 +56,44 @@ public class DaoVenda {
                 v.setQtd(rs.getInt("qtd"));
                 v.setData(rs.getString("data_venda"));
                 v.setValor(rs.getDouble("valor"));
+                v.setCusto(rs.getDouble("custo"));
+                v.setLucro(v.getValor()-v.getCusto());
                 list.add(v);
                 
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao ler.");
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, stmt, rs);
+        }
+        return list;
+    }
+    
+    public List<BeanVenda> readVenda(){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<BeanVenda> list = new ArrayList<>();
+        
+        try {
+            stmt = con.prepareStatement("select P.nome, V.qtd, V.data_venda, V.valor, V.custo from venda V"
+                    + " inner join Produto P"
+                    + " on P.id=V.id_produto order by data_venda desc limit 5;");
+            rs = stmt.executeQuery();
+            
+            while(rs.next()){
+                BeanVenda v = new BeanVenda();
+                v.setNomeProduto(rs.getString("P.nome"));
+                v.setQtd(rs.getInt("qtd"));
+                v.setData(rs.getString("data_venda"));
+                v.setValor(rs.getDouble("valor"));
+                v.setCusto(rs.getDouble("custo"));
+                v.setLucro(v.getValor()-v.getCusto());
+                list.add(v);
+                
+            }
+        } catch (Exception e) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, stmt, rs);
         }
