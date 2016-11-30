@@ -11,8 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import model.bean.BeanLote;
 import model.bean.Produto;
+import model.dao.DaoLote;
+import model.dao.ProdutoDAO;
 
 /**
  *
@@ -29,20 +33,25 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     }
     
     public void carregarComboBoxProduto(){
-        jComboBox1.addItem("Selecione");
-        Connection con = ConexaoBD.getConnection();
-        ArrayList<Produto> pList = new ArrayList<>();
-        Produto p = new Produto();
-        try {
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("select nome from produto order by nome asc;");
-            while(rs.next()){
-                jComboBox1.addItem(rs.getString("nome"));
-            }
-            ConexaoBD.closeConnection(con, st, rs);
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao carregar combo box.");
+        ProdutoDAO dao = new ProdutoDAO();
+        
+        for(Produto p : dao.read()){
+            jComboBox1.addItem(p);
         }
+    }
+    public String dataSql(String data){
+        String ano = data.substring(6, 10);
+        String mes = data.substring(3, 5);
+        String dia = data.substring(0, 2);
+        data = ano+"-"+mes+"-"+dia;
+        return data;
+    }
+    public String dataJava(String data){
+        String ano = data.substring(6, 10);
+        String mes = data.substring(3, 5);
+        String dia = data.substring(0, 2);
+        data = dia+"-"+mes+"-"+ano;
+        return data;
     }
 
     /**
@@ -66,6 +75,8 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
         jTextQuantidade = new javax.swing.JTextField();
         jTextValorLote = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jfData = new javax.swing.JFormattedTextField();
 
         setClosable(true);
 
@@ -84,6 +95,11 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
         });
 
         jButton2.setText("Salvar e Sair");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Cancelar");
 
@@ -101,33 +117,44 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
 
         jLabel4.setText("Valor Unitário");
 
+        jLabel5.setText("Data");
+
+        try {
+            jfData.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##-##-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton3)
-                        .addGap(54, 54, 54)
-                        .addComponent(jButton2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addGap(43, 43, 43)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel4)
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabelValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jButton3)
+                            .addGap(54, 54, 54)
+                            .addComponent(jButton2))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel2)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGap(44, 44, 44)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jTextQuantidade, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-                                .addComponent(jTextValorLote))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton4))
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jTextValorLote)
+                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jfData)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addContainerGap())
@@ -147,17 +174,22 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextValorLote, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel4)
-                        .addComponent(jLabelValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jfData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(jButton4))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton1)
+                            .addComponent(jButton2)
+                            .addComponent(jButton3)))
+                    .addComponent(jLabelValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33))
         );
 
@@ -174,16 +206,24 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        int qtd = Integer.parseInt(jTextQuantidade.getText());
-        double valorLote, precoMedio;
-        valorLote = Double.parseDouble(jTextValorLote.getText());
-        precoMedio=valorLote/qtd;
-        jLabelValorTotal.setText(String.valueOf(precoMedio));
+        BeanLote l = new BeanLote();
+        Produto p = new Produto();
+        p = (Produto) jComboBox1.getSelectedItem();
+        l.setId_produto(p.getId());
+        l.setQtd(Integer.parseInt(jTextQuantidade.getText()));
+        l.setTotal(Integer.parseInt(jTextValorLote.getText()));
+        l.setData(dataSql(jfData.getText()));
+        DaoLote daoL = new DaoLote();
+        daoL.create(l);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextValorLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextValorLoteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextValorLoteActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -191,13 +231,15 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<Object> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelValorTotal;
     private javax.swing.JTextField jTextQuantidade;
     private javax.swing.JTextField jTextValorLote;
+    private javax.swing.JFormattedTextField jfData;
     // End of variables declaration//GEN-END:variables
 }

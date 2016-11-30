@@ -59,9 +59,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public void readJTable(){
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         DaoVenda daoVenda = new DaoVenda();
-        ProdutoDAO daoProduto = new ProdutoDAO();
         modelo.setNumRows(0);
-        List<Produto> pList = daoProduto.read();
         
         for(BeanVenda v : daoVenda.readVenda()){
             modelo.addRow(new Object[]{
@@ -108,6 +106,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
@@ -337,6 +336,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         jMenu2.add(jMenuItem4);
 
+        jMenuItem6.setText("Lotes");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem6);
+
         jMenuBar1.add(jMenu2);
 
         jMenu7.setText("Produtos");
@@ -431,7 +438,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         Connection con = ConexaoBD.getConnection();
         try {
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("select sum(qtd) from venda_itens;");
+            ResultSet rs = st.executeQuery("select sum(qtd) from venda;");
             rs.first();
             int qtd = rs.getInt(1);
             System.out.println("Teste"+qtd);
@@ -475,6 +482,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtValorVenda.setText("");
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        JIFLotesJtable jifLotes = new JIFLotesJtable();
+        jDesktopPane1.add(jifLotes);
+        jifLotes.setVisible(true);
+        
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -514,6 +529,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     public static javax.swing.JPanel jPanel3;
