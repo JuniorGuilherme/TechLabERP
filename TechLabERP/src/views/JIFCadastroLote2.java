@@ -11,8 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import model.bean.BeanLote;
 import model.bean.Produto;
 import model.dao.DaoLote;
@@ -29,14 +31,14 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
      */
     public JIFCadastroLote2() {
         initComponents();
-        carregarComboBoxProduto();
+        carregarComboBoxProduto(jComboBox1);
     }
     
-    public void carregarComboBoxProduto(){
+    public void carregarComboBoxProduto(JComboBox jc){
         ProdutoDAO dao = new ProdutoDAO();
         
         for(Produto p : dao.read()){
-            jComboBox1.addItem(p);
+            jc.addItem(p);
         }
     }
     public String dataSql(String data){
@@ -65,9 +67,9 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
 
         jLabelValorTotal = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnSalvarLote = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jButton2 = new javax.swing.JButton();
+        btnSalvarESair = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -87,21 +89,26 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton1.setText("Salvar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnSalvarLote.setText("Salvar");
+        btnSalvarLote.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnSalvarLoteActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Salvar e Sair");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnSalvarESair.setText("Salvar e Sair");
+        btnSalvarESair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnSalvarESairActionPerformed(evt);
             }
         });
 
         jButton3.setText("Cancelar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Quantidade");
 
@@ -142,7 +149,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jButton3)
                             .addGap(54, 54, 54)
-                            .addComponent(jButton2))
+                            .addComponent(btnSalvarESair))
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jLabel2)
@@ -156,7 +163,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                                 .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jfData)))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(btnSalvarLote)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -186,8 +193,8 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                             .addComponent(jButton4))
                         .addGap(31, 31, 31)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jButton2)
+                            .addComponent(btnSalvarLote)
+                            .addComponent(btnSalvarESair)
                             .addComponent(jButton3)))
                     .addComponent(jLabelValorTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33))
@@ -204,7 +211,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
         jLabelValorTotal.setText(String.valueOf(precoMedio));
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnSalvarLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarLoteActionPerformed
         // TODO add your handling code here:
         BeanLote l = new BeanLote();
         Produto p = new Produto();
@@ -215,20 +222,38 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
         l.setData(dataSql(jfData.getText()));
         DaoLote daoL = new DaoLote();
         daoL.create(l);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        jTextQuantidade.setText("");
+        jTextValorLote.setText("");
+        jfData.setText("");
+    }//GEN-LAST:event_btnSalvarLoteActionPerformed
 
     private void jTextValorLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextValorLoteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextValorLoteActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnSalvarESairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarESairActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        BeanLote l = new BeanLote();
+        Produto p = new Produto();
+        p = (Produto) jComboBox1.getSelectedItem();
+        l.setId_produto(p.getId());
+        l.setQtd(Integer.parseInt(jTextQuantidade.getText()));
+        l.setTotal(Integer.parseInt(jTextValorLote.getText()));
+        l.setData(dataSql(jfData.getText()));
+        DaoLote daoL = new DaoLote();
+        daoL.create(l);
+        this.dispose();
+    }//GEN-LAST:event_btnSalvarESairActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnSalvarESair;
+    private javax.swing.JButton btnSalvarLote;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<Object> jComboBox1;

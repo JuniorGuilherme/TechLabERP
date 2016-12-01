@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import model.bean.BeanLote;
 import net.proteanit.sql.DbUtils;
-import views.MetodosGlobais;
 
 /**
  *
@@ -50,14 +49,14 @@ public class DaoLote {
         List<BeanLote> list = new ArrayList<>();
         
         try {
-            stmt = con.prepareStatement("select * from venda;");
+            stmt = con.prepareStatement("select * from lote;");
             rs = stmt.executeQuery();
             
             while(rs.next()){
                 BeanLote l = new BeanLote();
                 l.setId_produto(rs.getInt("id_produto"));
                 l.setQtd(rs.getInt("qtd"));
-                l.setData(rs.getString("data_venda"));
+                l.setData(rs.getString("data_lote"));
                 l.setTotal(rs.getDouble("valor"));
                 list.add(l);
                 
@@ -69,12 +68,60 @@ public class DaoLote {
         }
         return list;
     }
+    public BeanLote readId(int id){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        BeanLote ld = new BeanLote();
+        
+        try {
+            stmt = con.prepareStatement("select P.nome as Produto, L.qtd as Quantidade, L.valor as Valor from produto P " 
+                    + " inner join lote L on P.id=L.id_produto " 
+                    + " where L.id="+id);
+            rs = stmt.executeQuery();
+            
+            while(rs.next()){
+                ld.setNomeProduto(rs.getString("Produto"));
+                ld.setQtd(rs.getInt("Quantidade"));
+                ld.setTotal(rs.getDouble("Valor"));
+                
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, stmt, rs);
+        }
+        return ld;
+    }
+    public BeanLote readForId(int id){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        BeanLote ld = new BeanLote();
+        
+        try {
+            st = con.prepareStatement("select P.nome, L.qtd, L.data_lote, L.valor, L.data_lote from produto P inner join lote L on P.id=L.id_produto where L.id="+id);
+            rs = st.executeQuery();
+            
+            while(rs.next()){
+                ld.setNomeProduto(rs.getString("P.nome"));
+                ld.setData(rs.getString("L.id_produto"));
+                ld.setQtd(rs.getInt("L.qtd"));
+                ld.setTotal(rs.getDouble("L.valor"));
+            }
+        } catch (Exception e) {
+            Logger.getLogger(DaoLote.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, st, rs);
+        }
+        return ld;
+    }
     
     public String dataJava(String data){
-        String ano = data.substring(6, 10);
-        String mes = data.substring(3, 5);
-        String dia = data.substring(0, 2);
-        data = dia+"-"+mes+"-"+ano;
+        String ano = data.substring(0, 4);
+        String mes = data.substring(4, 8);
+        String dia = data.substring(8, 10);
+        data = dia+mes+ano;
         return data;
     }
     
@@ -102,7 +149,6 @@ public class DaoLote {
         Connection con = ConexaoBD.getConnection();
         PreparedStatement st = null;
         ResultSet rs;
-        
         try {
             st = con.prepareStatement("select L.id as Codigo, P.nome Produto, L.qtd as Quantidade, L.data_lote as Data, L.valor as Valor from lote L"
                     + " inner join produto P"
@@ -115,5 +161,17 @@ public class DaoLote {
             ConexaoBD.closeConnection(con, st);
         }
     }
-   
+    public void remove(int id){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement st = null;
+        
+        try {
+            st=con.prepareStatement("delete from lote where id="+id);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(DaoLote.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, st);
+        }
+    }
 }

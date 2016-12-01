@@ -47,13 +47,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jTable1.setRowSorter(new TableRowSorter(modelo));
         readJTable();
         refreshInfo();
+        jTable1.setEnabled(false);
     }
     public void addPrincipal(Component x){
         jDesktopPane1.add(x);
     }
-    public void carregarComboboxProduto(){
+    public static void carregarComboboxProduto(){
         ProdutoDAO dao = new ProdutoDAO();
-        
+        cbProduto.removeAllItems();
         for(Produto p : dao.read()){
             cbProduto.addItem(p);
         }
@@ -93,7 +94,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                     " inner join venda_info VI" +
                                         " on V.id=VI.id_venda;");
             rs.first();
-            jlLucroTotal.setText(String.valueOf(rs.getDouble(1)));
+            jlLucroTotal.setText("R$"+String.valueOf(rs.getDouble(1)));
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao atualizar jLabel.");
         }
@@ -127,12 +128,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtValorVenda = new javax.swing.JTextField();
         txtQtd = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        btnCadastrarVenda = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jftfDataVenda = new javax.swing.JFormattedTextField();
         ckbHoje = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem7 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -198,7 +200,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ultimas Vendas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ultimas Vendas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel2.setToolTipText("");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -220,6 +223,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.setShowHorizontalLines(false);
+        jTable1.setShowVerticalLines(false);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -258,10 +263,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jLabel5.setText("Quantidade");
 
-        jButton2.setText("Cadastrar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnCadastrarVenda.setText("Cadastrar");
+        btnCadastrarVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnCadastrarVendaActionPerformed(evt);
             }
         });
 
@@ -300,7 +305,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
-                        .addComponent(jButton2))
+                        .addComponent(btnCadastrarVenda))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
@@ -344,7 +349,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnCadastrarVenda)
                     .addComponent(jButton3))
                 .addContainerGap())
         );
@@ -375,14 +380,25 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
+        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/house.png"))); // NOI18N
         jMenu1.setText("Arquivo");
+
+        jMenuItem7.setText("Sair");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem7);
+
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/box.png"))); // NOI18N
         jMenu2.setText("Estoque");
 
         jMenuItem4.setText("Inserir Lote");
@@ -403,6 +419,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu2);
 
+        jMenu7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pencil.png"))); // NOI18N
         jMenu7.setText("Produtos");
 
         jMenuItem2.setText("Cadastrar");
@@ -415,6 +432,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu7);
 
+        jMenu8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cart_put.png"))); // NOI18N
         jMenu8.setText("Vendas");
 
         jMenuItem3.setText("Adicionar Venda");
@@ -495,7 +513,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         refreshInfo();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnCadastrarVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarVendaActionPerformed
         // TODO add your handling code here:
         Produto p = (Produto)cbProduto.getSelectedItem();
         BeanVenda v = new BeanVenda();
@@ -521,12 +539,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         dao.create(v);
         readJTable();
         limpaVenda();
+        refreshInfo();
         }
         else{
             JOptionPane.showMessageDialog(null, "Sem estoque. Itens restantes: "+p.getQtd_estoque());
             limpaVenda();
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnCadastrarVendaActionPerformed
 
     private void cbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbProdutoActionPerformed
         // TODO add your handling code here:
@@ -552,11 +571,17 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void ckbHojeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbHojeActionPerformed
         // TODO add your handling code here:
         jftfDataVenda.setText("");
+        carregarComboboxProduto();
     }//GEN-LAST:event_ckbHojeActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jTable1MouseClicked
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -572,10 +597,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCadastrarVenda;
     private javax.swing.JButton btnRefresh;
     public static javax.swing.JComboBox<Object> cbProduto;
     private javax.swing.JCheckBox ckbHoje;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
@@ -600,6 +625,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     public static javax.swing.JPanel jPanel3;

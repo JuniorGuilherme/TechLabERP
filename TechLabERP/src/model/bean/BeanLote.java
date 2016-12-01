@@ -5,6 +5,8 @@
  */
 package model.bean;
 
+import java.sql.Date;
+
 /**
  *
  * @author Junior Guilherme
@@ -13,6 +15,15 @@ public class BeanLote {
     int id_produto, qtd;
     double total;
     String data, nomeProduto;
+    Date dataSql;
+
+    public Date getDataSql() {
+        return dataSql;
+    }
+
+    public void setDataSql(Date dataSql) {
+        this.dataSql = dataSql;
+    }
 
     public String getNomeProduto() {
         return nomeProduto;
