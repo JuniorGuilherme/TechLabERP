@@ -11,7 +11,23 @@ package model.bean;
  */
 public class Produto {
     private String nome;
-    private int id, idCategoria;
+    private int id, idCategoria, qtd, qtd_estoque;
+
+    public int getQtd() {
+        return qtd;
+    }
+
+    public void setQtd(int qtd) {
+        this.qtd = qtd;
+    }
+
+    public int getQtd_estoque() {
+        return qtd_estoque;
+    }
+
+    public void setQtd_estoque(int qtd_estoque) {
+        this.qtd_estoque = qtd_estoque;
+    }
 
     public String getNome() {
         return nome;

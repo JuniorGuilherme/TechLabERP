@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import model.bean.BeanLote;
+import net.proteanit.sql.DbUtils;
 import views.MetodosGlobais;
 
 /**
@@ -76,61 +78,42 @@ public class DaoLote {
         return data;
     }
     
-    public List<BeanLote> readLote(){
+    public void readJtableRS2(String busca, JTable jt){
+        ResultSet rs;
+        PreparedStatement st = null;
         Connection con = ConexaoBD.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        List<BeanLote> list = new ArrayList<>();
-        
-        try {
-            stmt = con.prepareStatement("select P.nome, L.qtd, L.data_lote, L.valor from lote L"
-                    + " inner join roduto P"
-                    + " on P.id=L.id_produto order by data_lote desc;");
-            rs = stmt.executeQuery();
-            
-            while(rs.next()){
-                BeanLote l = new BeanLote();
-                l.setNomeProduto(rs.getString("P.nome"));
-                l.setQtd(rs.getInt("L.qtd"));
-                l.setData(dataJava(rs.getString("L.data_lote")));
-                l.setTotal(rs.getDouble("L.valor"));
-                
-            }
-        } catch (Exception e) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
-        }finally{
-            ConexaoBD.closeConnection(con, stmt, rs);
-        }
-        return list;
-    }
-    
-    public List<BeanLote> readForDesc(String busca){
-        Connection con = ConexaoBD.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        List<BeanLote> list = new ArrayList<>();
-        
-        try {
-            stmt = con.prepareStatement("select P.nome, L.qtd, L.data_lote, L.valor from lote L " 
+        String sql = "select L.id as Codigo, P.nome as Produto, L.qtd as Quantidade, L.data_lote as Data, L.valor as Valor from lote L " 
                     + "inner join produto P on P.id=L.id_produto " 
-                    + "where P.nome like '%"+busca+"%';");
-            rs = stmt.executeQuery();
+                    + "where P.nome like '%"+busca+"%';";
+    
+        try {
             
-            while(rs.next()){
-                BeanLote l = new BeanLote();
-                l.setNomeProduto(rs.getString("P.nome"));
-                l.setQtd(rs.getInt("qtd"));
-                l.setData(rs.getString("data_lote"));
-                l.setTotal(rs.getDouble("valor"));
-                list.add(l);
-                
-            }
+            st = con.prepareStatement(sql);
+            rs=st.executeQuery();
+            jt.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException e) {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
         }finally{
-            ConexaoBD.closeConnection(con, stmt, rs);
+            ConexaoBD.closeConnection(con, st);
         }
-        return list;
+}
+    
+    public void readLoteProduto(JTable jt){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement st = null;
+        ResultSet rs;
+        
+        try {
+            st = con.prepareStatement("select L.id as Codigo, P.nome Produto, L.qtd as Quantidade, L.data_lote as Data, L.valor as Valor from lote L"
+                    + " inner join produto P"
+                    + " on P.id=L.id_produto order by data_lote desc;");
+            rs = st.executeQuery();
+            jt.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (SQLException e) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, st);
+        }
     }
    
 }

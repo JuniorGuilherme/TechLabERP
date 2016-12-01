@@ -8,6 +8,7 @@ package views;
 import connection.ConexaoBD;
 import java.awt.Component;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +46,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
         jTable1.setRowSorter(new TableRowSorter(modelo));
         readJTable();
+        refreshInfo();
     }
     public void addPrincipal(Component x){
         jDesktopPane1.add(x);
@@ -72,6 +74,30 @@ public class TelaPrincipal extends javax.swing.JFrame {
             });
         }
     }
+    public void limpaVenda(){
+        jftfDataVenda.setText("");
+        ckbHoje.setSelected(false);
+        txtValorVenda.setText("");
+        txtQtd.setText("");
+    }
+    
+    public void refreshInfo(){
+        Connection con = ConexaoBD.getConnection();
+        try {
+            Statement st = con.createStatement();
+            ResultSet rs = null;
+            rs=st.executeQuery("select sum(qtd) from venda;");
+            rs.first();
+            jLabelItensVendidos.setText(String.valueOf(rs.getInt(1)));
+            rs=st.executeQuery("select sum(V.valor)-sum(VI.custo_total) from venda V" +
+                                    " inner join venda_info VI" +
+                                        " on V.id=VI.id_venda;");
+            rs.first();
+            jlLucroTotal.setText(String.valueOf(rs.getDouble(1)));
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Erro ao atualizar jLabel.");
+        }
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,7 +113,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabelItensVendidos = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jlLucroTotal = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -102,6 +130,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jftfDataVenda = new javax.swing.JFormattedTextField();
+        ckbHoje = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -123,12 +152,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jLabel1.setText("Itens Vendidos");
 
-        jButton1.setText("Refresh");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnRefresh.setText("Refresh");
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnRefreshActionPerformed(evt);
             }
         });
+
+        jLabel6.setText("Lucro Obtido");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -136,13 +167,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(jLabelItensVendidos, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(62, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnRefresh))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel6))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabelItensVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                            .addComponent(jlLucroTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 52, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -152,8 +189,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelItensVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jlLucroTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnRefresh)
                 .addContainerGap())
         );
 
@@ -177,6 +218,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -237,6 +283,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        ckbHoje.setText("Hoje");
+        ckbHoje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbHojeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -255,7 +308,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addGap(19, 19, 19)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cbProduto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jftfDataVenda)))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jftfDataVenda)
+                                .addGap(18, 18, 18)
+                                .addComponent(ckbHoje))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
@@ -272,7 +328,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jftfDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jftfDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ckbHoje))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -285,7 +342,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
@@ -433,38 +490,42 @@ public class TelaPrincipal extends javax.swing.JFrame {
         v.setVisible(true);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         // TODO add your handling code here:
-        Connection con = ConexaoBD.getConnection();
-        try {
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("select sum(qtd) from venda;");
-            rs.first();
-            int qtd = rs.getInt(1);
-            System.out.println("Teste"+qtd);
-            jLabelItensVendidos.setText(String.valueOf(qtd));
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao atualizar jLabel.");
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+        refreshInfo();
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        BeanVenda v = new BeanVenda();
-        DaoVenda dao = new DaoVenda();
         Produto p = (Produto)cbProduto.getSelectedItem();
+        BeanVenda v = new BeanVenda();
         v.setQtd(Integer.parseInt(txtQtd.getText().toString()));
+        if(p.getQtd_estoque()>=v.getQtd() && p.getQtd_estoque()!=0){
+        DaoVenda dao = new DaoVenda();
+        String data;
+        
         v.setIdProduto(p.getId());
-        String teste = jftfDataVenda.getText().toString();
-        JOptionPane.showMessageDialog(null, teste);
+        if(ckbHoje.isSelected()){
+            Date dataA = new Date(System.currentTimeMillis());
+            v.setData(dataA.toString());
+        }
+        else{
         String ano = jftfDataVenda.getText().substring(6, 10);
         String mes = jftfDataVenda.getText().substring(3, 5);
         String dia = jftfDataVenda.getText().substring(0, 2);
-        String data = ano+"-"+mes+"-"+dia;
+        data = ano+"-"+mes+"-"+dia;
         v.setData(data);
+        }
+        
         v.setValor(Double.valueOf(txtValorVenda.getText()));
         dao.create(v);
         readJTable();
+        limpaVenda();
+        }
+        else{
+            JOptionPane.showMessageDialog(null, "Sem estoque. Itens restantes: "+p.getQtd_estoque());
+            limpaVenda();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void cbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbProdutoActionPerformed
@@ -477,9 +538,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        jftfDataVenda.setText("");
-        txtQtd.setText("");
-        txtValorVenda.setText("");
+        limpaVenda();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -489,6 +548,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jifLotes.setVisible(true);
         
     }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void ckbHojeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbHojeActionPerformed
+        // TODO add your handling code here:
+        jftfDataVenda.setText("");
+    }//GEN-LAST:event_ckbHojeActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -504,8 +572,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRefresh;
     public static javax.swing.JComboBox<Object> cbProduto;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox ckbHoje;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JDesktopPane jDesktopPane1;
@@ -514,6 +583,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelItensVendidos;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
@@ -536,6 +606,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JFormattedTextField jftfDataVenda;
+    private javax.swing.JLabel jlLucroTotal;
     private javax.swing.JTextField txtQtd;
     private javax.swing.JTextField txtValorVenda;
     // End of variables declaration//GEN-END:variables

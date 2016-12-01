@@ -76,9 +76,12 @@ public class DaoVenda {
         List<BeanVenda> list = new ArrayList<>();
         
         try {
-            stmt = con.prepareStatement("select P.nome, V.qtd, V.data_venda, V.valor, V.custo from venda V"
-                    + " inner join Produto P"
-                    + " on P.id=V.id_produto order by data_venda desc limit 5;");
+            stmt = con.prepareStatement("select P.nome, V.qtd, V.data_venda, V.valor, VI.custo_unit from venda_info VI"
+                    + " inner join venda V"
+                    + " on V.id=VI.id_venda"
+                    + " inner join produto P"
+                    + " on V.id_produto=P.id"
+                    + " order by V.data_venda desc limit 5;");
             rs = stmt.executeQuery();
             
             while(rs.next()){
@@ -87,7 +90,7 @@ public class DaoVenda {
                 v.setQtd(rs.getInt("qtd"));
                 v.setData(rs.getString("data_venda"));
                 v.setValor(rs.getDouble("valor"));
-                v.setCusto(rs.getDouble("custo"));
+                v.setCusto(rs.getDouble("custo_unit"));
                 v.setLucro(v.getValor()-v.getCusto());
                 list.add(v);
                 

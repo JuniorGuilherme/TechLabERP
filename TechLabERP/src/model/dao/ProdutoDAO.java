@@ -54,6 +54,7 @@ public class ProdutoDAO {
                 Produto p = new Produto();
                 p.setNome(rs.getString("nome"));
                 p.setId(rs.getInt("id"));
+                p.setQtd_estoque(rs.getInt("qtd_estoque"));
                 list.add(p);
                 
             }
