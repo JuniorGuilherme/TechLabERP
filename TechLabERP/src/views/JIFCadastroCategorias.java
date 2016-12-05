@@ -113,10 +113,14 @@ public class JIFCadastroCategorias extends javax.swing.JInternalFrame {
         CategoriaDAO dao = new CategoriaDAO();
         c.setDescricao(jTextDescricaoCategoria.getText());
         dao.create(c);
+        JIFCadastroProdutos2.cbCategorias.addItem(c);
+        this.dispose();
+        TelaPrincipal.carregarComboboxProduto();
     }//GEN-LAST:event_jButtonSalvarSairActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
 

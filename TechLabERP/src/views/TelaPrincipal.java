@@ -13,12 +13,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -27,7 +30,7 @@ import javax.swing.text.MaskFormatter;
 import model.bean.BeanVenda;
 import model.bean.Produto;
 import model.dao.DaoVenda;
-import model.dao.ProdutoDAO;
+import model.dao.DaoProduto;
 
 /**
  *
@@ -48,12 +51,24 @@ public class TelaPrincipal extends javax.swing.JFrame {
         readJTable();
         refreshInfo();
         jTable1.setEnabled(false);
+        readJtableProdutos();
+    }
+    public String dataSql(String data){
+        String ano = data.substring(6, 10);
+        String mes = data.substring(2, 6);
+        String dia = data.substring(0, 2);
+        data = ano+mes+dia;
+        return data;
+    }
+    public void readJtableProdutos(){
+        DaoProduto dao = new DaoProduto();
+        dao.readJtableMaisVendidos(jtProdutos);
     }
     public void addPrincipal(Component x){
         jDesktopPane1.add(x);
     }
     public static void carregarComboboxProduto(){
-        ProdutoDAO dao = new ProdutoDAO();
+        DaoProduto dao = new DaoProduto();
         cbProduto.removeAllItems();
         for(Produto p : dao.read()){
             cbProduto.addItem(p);
@@ -76,7 +91,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         }
     }
     public void limpaVenda(){
-        jftfDataVenda.setText("");
+        jfDataVenda.setText("");
         ckbHoje.setSelected(false);
         txtValorVenda.setText("");
         txtQtd.setText("");
@@ -84,9 +99,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
     
     public void refreshInfo(){
         Connection con = ConexaoBD.getConnection();
+        Statement st = null;
+        ResultSet rs = null;
         try {
-            Statement st = con.createStatement();
-            ResultSet rs = null;
+            st = con.createStatement();
             rs=st.executeQuery("select sum(qtd) from venda;");
             rs.first();
             jLabelItensVendidos.setText(String.valueOf(rs.getInt(1)));
@@ -95,9 +111,55 @@ public class TelaPrincipal extends javax.swing.JFrame {
                                         " on V.id=VI.id_venda;");
             rs.first();
             jlLucroTotal.setText("R$"+String.valueOf(rs.getDouble(1)));
+            rs=st.executeQuery("select sum(L.valor) from lote L");
+            rs.first();
+            jlInvestido.setText("R$"+String.valueOf(rs.getDouble(1)));
+            rs=st.executeQuery("select sum(V.valor) from venda V");
+            rs.first();
+            jlLucroBruto.setText("R$"+String.valueOf(rs.getDouble(1)));
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro ao atualizar jLabel.");
+            JOptionPane.showMessageDialog(null, "Erro ao atualizar resumo de caixa.");
+        }finally{
+            ConexaoBD.closeConnection(con, st, rs);
         }
+    }
+    
+    public boolean isValidDate(String date, String format) {         
+	SimpleDateFormat dateFormat = new SimpleDateFormat(format);     
+	dateFormat.setLenient(false);                                   
+	try {                                                           
+		dateFormat.parse(date);                                     
+		return true;                                                
+	} catch (ParseException e) {  
+                JOptionPane.showMessageDialog(null, "Data invalida.");
+		return false;                                               
+	}                                                               
+}  
+
+    public boolean isValidNumbers(int qtd, double valor) {
+        if (qtd >= 0 && valor >= 0) {
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(null, "Não informe numeros negativos nos campos 'Quantidade' e 'Valor'.");
+            return false;
+        }
+    }
+    public void confirmaVenda(BeanVenda v, Produto p){
+        
+        
+        v.setQtd(Integer.parseInt(txtQtd.getText().toString()));
+        DaoVenda dao = new DaoVenda();
+        String data;
+        
+        v.setIdProduto(p.getId());
+        
+        
+        v.setValor(Double.valueOf(txtValorVenda.getText()));
+        dao.create(v);
+        readJTable();
+        limpaVenda();
+        refreshInfo();
+        readJtableProdutos();
     }
     
     /**
@@ -117,6 +179,10 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btnRefresh = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jlLucroTotal = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jlLucroBruto = new javax.swing.JLabel();
+        jlInvestido = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -130,8 +196,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
         txtQtd = new javax.swing.JTextField();
         btnCadastrarVenda = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jftfDataVenda = new javax.swing.JFormattedTextField();
+        jfDataVenda = new javax.swing.JFormattedTextField();
         ckbHoje = new javax.swing.JCheckBox();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jtProdutos = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
@@ -140,17 +209,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenuItem6 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenu8 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
+        jMenu8 = new javax.swing.JMenu();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
-        jMenu5 = new javax.swing.JMenu();
-        jMenu6 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
 
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jDesktopPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jDesktopPane1MouseEntered(evt);
+            }
+        });
 
         jLabel1.setText("Itens Vendidos");
 
@@ -161,7 +235,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setText("Lucro Obtido");
+        jLabel6.setText("Lucro Liquido");
+
+        jLabel7.setText("Lucro Bruto");
+
+        jLabel8.setText("Investido");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -176,11 +254,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel6))
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabelItensVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                            .addComponent(jlLucroTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jlLucroTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jlLucroBruto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jlInvestido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(0, 52, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -195,13 +277,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jlLucroTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jlLucroBruto, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jlInvestido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnRefresh)
                 .addContainerGap())
         );
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ultimas Vendas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ultimas Vendas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 18))); // NOI18N
         jPanel2.setToolTipText("");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -278,13 +368,13 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
 
         try {
-            jftfDataVenda.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##-##-####")));
+            jfDataVenda.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##-##-####")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        jftfDataVenda.addActionListener(new java.awt.event.ActionListener() {
+        jfDataVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jftfDataVendaActionPerformed(evt);
+                jfDataVendaActionPerformed(evt);
             }
         });
 
@@ -314,7 +404,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cbProduto, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jftfDataVenda)
+                                .addComponent(jfDataVenda)
                                 .addGap(18, 18, 18)
                                 .addComponent(ckbHoje))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -333,7 +423,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jftfDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jfDataVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ckbHoje))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -347,16 +437,51 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtQtd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarVenda)
                     .addComponent(jButton3))
                 .addContainerGap())
         );
 
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Produtos mais vendidos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 18))); // NOI18N
+
+        jtProdutos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jtProdutos.setEnabled(false);
+        jtProdutos.setShowHorizontalLines(false);
+        jtProdutos.setShowVerticalLines(false);
+        jScrollPane2.setViewportView(jtProdutos);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 821, Short.MAX_VALUE)
+                .addGap(31, 31, 31))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        );
+
         jDesktopPane1.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jPanel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jDesktopPane1.setLayer(jPanel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane1.setLayer(jPanel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
@@ -370,17 +495,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 314, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -430,18 +557,26 @@ public class TelaPrincipal extends javax.swing.JFrame {
         });
         jMenu7.add(jMenuItem2);
 
-        jMenuBar1.add(jMenu7);
-
-        jMenu8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cart_put.png"))); // NOI18N
-        jMenu8.setText("Vendas");
-
-        jMenuItem3.setText("Adicionar Venda");
+        jMenuItem3.setText("Produtos");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem3ActionPerformed(evt);
             }
         });
-        jMenu8.add(jMenuItem3);
+        jMenu7.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu7);
+
+        jMenu8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cart_put.png"))); // NOI18N
+        jMenu8.setText("Vendas");
+
+        jMenuItem8.setText("Vendas");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenu8.add(jMenuItem8);
 
         jMenuBar1.add(jMenu8);
 
@@ -456,12 +591,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jMenu3.add(jMenuItem5);
 
         jMenuBar1.add(jMenu3);
-
-        jMenu5.setText("Usuarios");
-        jMenuBar1.add(jMenu5);
-
-        jMenu6.setText("Clientes");
-        jMenuBar1.add(jMenu6);
 
         jMenu4.setText("Sobre");
         jMenuBar1.add(jMenu4);
@@ -501,13 +630,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         cl.setVisible(true);
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        // TODO add your handling code here:
-        JIFVenda v = new JIFVenda();
-        jDesktopPane1.add(v);
-        v.setVisible(true);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         // TODO add your handling code here:
         refreshInfo();
@@ -515,45 +637,34 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void btnCadastrarVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarVendaActionPerformed
         // TODO add your handling code here:
-        Produto p = (Produto)cbProduto.getSelectedItem();
         BeanVenda v = new BeanVenda();
-        v.setQtd(Integer.parseInt(txtQtd.getText().toString()));
-        if(p.getQtd_estoque()>=v.getQtd() && p.getQtd_estoque()!=0){
-        DaoVenda dao = new DaoVenda();
-        String data;
-        
-        v.setIdProduto(p.getId());
-        if(ckbHoje.isSelected()){
-            Date dataA = new Date(System.currentTimeMillis());
-            v.setData(dataA.toString());
-        }
-        else{
-        String ano = jftfDataVenda.getText().substring(6, 10);
-        String mes = jftfDataVenda.getText().substring(3, 5);
-        String dia = jftfDataVenda.getText().substring(0, 2);
-        data = ano+"-"+mes+"-"+dia;
-        v.setData(data);
-        }
-        
-        v.setValor(Double.valueOf(txtValorVenda.getText()));
-        dao.create(v);
-        readJTable();
-        limpaVenda();
-        refreshInfo();
-        }
-        else{
-            JOptionPane.showMessageDialog(null, "Sem estoque. Itens restantes: "+p.getQtd_estoque());
+        Produto p = (Produto)cbProduto.getSelectedItem();
+        if (p.getQtd_estoque()> Integer.parseInt(txtQtd.getText())){
+            if (ckbHoje.isSelected()) {
+                Date dataA = new Date(System.currentTimeMillis());
+                v.setData(dataA.toString());
+                confirmaVenda(v, p);
+            } else {
+                if (isValidDate(jfDataVenda.getText(), "dd-MM-yyyy")) {
+                    v.setData(dataSql(jfDataVenda.getText()));
+                    confirmaVenda(v, p);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Sem estoque. Itens restantes: " + p.getQtd_estoque());
             limpaVenda();
         }
+        
+      
     }//GEN-LAST:event_btnCadastrarVendaActionPerformed
 
     private void cbProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbProdutoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbProdutoActionPerformed
 
-    private void jftfDataVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jftfDataVendaActionPerformed
+    private void jfDataVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jfDataVendaActionPerformed
        
-    }//GEN-LAST:event_jftfDataVendaActionPerformed
+    }//GEN-LAST:event_jfDataVendaActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
@@ -570,8 +681,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void ckbHojeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbHojeActionPerformed
         // TODO add your handling code here:
-        jftfDataVenda.setText("");
-        carregarComboboxProduto();
+        jfDataVenda.setText("");
     }//GEN-LAST:event_ckbHojeActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -582,6 +692,26 @@ public class TelaPrincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jDesktopPane1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDesktopPane1MouseEntered
+        // TODO add your handling code here:
+        refreshInfo();
+        readJTable();
+    }//GEN-LAST:event_jDesktopPane1MouseEntered
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        // TODO add your handling code here:
+        JIFVendas vendas = new JIFVendas();
+        jDesktopPane1.add(vendas);
+        vendas.setVisible(true);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        JIFProdutosInfo produtos = new JIFProdutosInfo();
+        jDesktopPane1.add(produtos);
+        produtos.setVisible(true);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -602,20 +732,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public static javax.swing.JComboBox<Object> cbProduto;
     private javax.swing.JCheckBox ckbHoje;
     private javax.swing.JButton jButton3;
-    private javax.swing.JDesktopPane jDesktopPane1;
+    public static javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabelItensVendidos;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    public javax.swing.JLabel jLabelItensVendidos;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenu jMenu5;
-    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu8;
     private javax.swing.JMenuBar jMenuBar1;
@@ -626,13 +756,19 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     public static javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JFormattedTextField jftfDataVenda;
+    private javax.swing.JFormattedTextField jfDataVenda;
+    private javax.swing.JLabel jlInvestido;
+    private javax.swing.JLabel jlLucroBruto;
     private javax.swing.JLabel jlLucroTotal;
+    private javax.swing.JTable jtProdutos;
     private javax.swing.JTextField txtQtd;
     private javax.swing.JTextField txtValorVenda;
     // End of variables declaration//GEN-END:variables

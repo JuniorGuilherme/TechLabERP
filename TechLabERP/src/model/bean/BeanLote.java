@@ -12,7 +12,15 @@ import java.sql.Date;
  * @author Junior Guilherme
  */
 public class BeanLote {
-    int id_produto, qtd;
+    int id_produto, qtd, id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     double total;
     String data, nomeProduto;
     Date dataSql;

@@ -5,13 +5,26 @@
  */
 package model.bean;
 
+import java.sql.Date;
+
 /**
  *
  * @author Junior Guilherme
  */
 public class BeanVenda {
     String Data, nomeProduto;
+    double valor, custo, lucro;
+    int idProduto, id, qtd;
+    Date dataSql;
 
+    public Date getDataSql() {
+        return dataSql;
+    }
+
+    public void setDataSql(Date dataSql) {
+        this.dataSql = dataSql;
+    }
+    
     public String getNomeProduto() {
         return nomeProduto;
     }
@@ -19,13 +32,11 @@ public class BeanVenda {
     public void setNomeProduto(String nomeProduto) {
         this.nomeProduto = nomeProduto;
     }
-    int qtd;
-    double valor, custo, lucro;
 
     public double getCusto() {
         return custo;
     }
-
+    
     public void setCusto(double custo) {
         this.custo = custo;
     }
@@ -37,7 +48,7 @@ public class BeanVenda {
     public void setLucro(double lucro) {
         this.lucro = lucro;
     }
-    int idProduto, id;
+    
 
     public String getData() {
         return Data;

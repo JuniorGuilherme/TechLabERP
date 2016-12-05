@@ -7,6 +7,7 @@ package views;
 
 import connection.ConexaoBD;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,7 +19,7 @@ import javax.swing.JTable;
 import model.bean.BeanLote;
 import model.bean.Produto;
 import model.dao.DaoLote;
-import model.dao.ProdutoDAO;
+import model.dao.DaoProduto;
 
 /**
  *
@@ -35,7 +36,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     }
     
     public void carregarComboBoxProduto(JComboBox jc){
-        ProdutoDAO dao = new ProdutoDAO();
+        DaoProduto dao = new DaoProduto();
         
         for(Produto p : dao.read()){
             jc.addItem(p);
@@ -79,6 +80,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jfData = new javax.swing.JFormattedTextField();
+        cbkHoje = new javax.swing.JCheckBox();
 
         setClosable(true);
 
@@ -132,6 +134,8 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
             ex.printStackTrace();
         }
 
+        cbkHoje.setText("Hoje");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -162,9 +166,15 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                                 .addComponent(jTextValorLote)
                                 .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jfData)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(btnSalvarLote)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addComponent(btnSalvarLote)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(cbkHoje)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,8 +194,9 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jfData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                    .addComponent(jfData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbkHoje))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -214,17 +225,20 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     private void btnSalvarLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarLoteActionPerformed
         // TODO add your handling code here:
         BeanLote l = new BeanLote();
-        Produto p = new Produto();
+        Produto p;
         p = (Produto) jComboBox1.getSelectedItem();
         l.setId_produto(p.getId());
         l.setQtd(Integer.parseInt(jTextQuantidade.getText()));
         l.setTotal(Integer.parseInt(jTextValorLote.getText()));
+        if(cbkHoje.isSelected()){
+            Date dataA = new Date(System.currentTimeMillis());
+            l.setData(dataA.toString());
+        }
+        else{
         l.setData(dataSql(jfData.getText()));
+        }
         DaoLote daoL = new DaoLote();
         daoL.create(l);
-        jTextQuantidade.setText("");
-        jTextValorLote.setText("");
-        jfData.setText("");
     }//GEN-LAST:event_btnSalvarLoteActionPerformed
 
     private void jTextValorLoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextValorLoteActionPerformed
@@ -234,12 +248,18 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     private void btnSalvarESairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarESairActionPerformed
         // TODO add your handling code here:
         BeanLote l = new BeanLote();
-        Produto p = new Produto();
+        Produto p;
         p = (Produto) jComboBox1.getSelectedItem();
         l.setId_produto(p.getId());
         l.setQtd(Integer.parseInt(jTextQuantidade.getText()));
         l.setTotal(Integer.parseInt(jTextValorLote.getText()));
+        if(cbkHoje.isSelected()){
+            Date dataA = new Date(System.currentTimeMillis());
+            l.setData(dataA.toString());
+        }
+        else{
         l.setData(dataSql(jfData.getText()));
+        }
         DaoLote daoL = new DaoLote();
         daoL.create(l);
         this.dispose();
@@ -254,6 +274,7 @@ public class JIFCadastroLote2 extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvarESair;
     private javax.swing.JButton btnSalvarLote;
+    private javax.swing.JCheckBox cbkHoje;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<Object> jComboBox1;

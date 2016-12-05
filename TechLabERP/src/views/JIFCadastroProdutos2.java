@@ -23,7 +23,7 @@ import javax.swing.ListCellRenderer;
 import model.bean.Categoria;
 import model.bean.Produto;
 import model.dao.CategoriaDAO;
-import model.dao.ProdutoDAO;
+import model.dao.DaoProduto;
 
 /**
  *
@@ -36,12 +36,25 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
      */
     public JIFCadastroProdutos2() {
         initComponents();
+        carregaCbCategoria();
+    }
+    public static void carregaCbCategoria(){
         CategoriaDAO dao = new CategoriaDAO();
+        cbCategorias.removeAllItems();
         for(Categoria c: dao.read()){
-            jComboBox1.addItem(c);
+            cbCategorias.addItem(c);
         }
     }
-    
+    public void addProduto(){
+        Produto p = new Produto();
+        DaoProduto dao = new DaoProduto();
+
+        p.setNome(jTextNomeProduto.getText());
+        Categoria c = (Categoria) cbCategorias.getSelectedItem();
+        p.setidCategoria(c.getId());
+        dao.create(p);
+        TelaPrincipal.cbProduto.addItem(p);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -51,24 +64,25 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbCategorias = new javax.swing.JComboBox<>();
         jButtonSalvar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnSalvarSair = new javax.swing.JButton();
         jButtonCancelarCP = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTextNomeProduto = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jButtonNovaCategoria = new javax.swing.JButton();
-        jTextCategoria = new javax.swing.JTextField();
 
         setClosable(true);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                formMouseEntered(evt);
+            }
+        });
 
-        jLabel3.setText("Categoria");
-
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cbCategorias.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cbCategoriasActionPerformed(evt);
             }
         });
 
@@ -79,10 +93,10 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton2.setText("Salvar e Sair");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnSalvarSair.setText("Salvar e Sair");
+        btnSalvarSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnSalvarSairActionPerformed(evt);
             }
         });
 
@@ -113,24 +127,21 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jButtonCancelarCP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                        .addComponent(jButton2)
-                        .addGap(77, 77, 77)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 142, Short.MAX_VALUE)
+                        .addComponent(btnSalvarSair)
+                        .addGap(135, 135, 135)
                         .addComponent(jButtonSalvar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel2))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextNomeProduto)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButtonNovaCategoria)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jTextCategoria))))
+                                .addComponent(cbCategorias, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButtonNovaCategoria)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -144,15 +155,11 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jButtonNovaCategoria)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
+                    .addComponent(cbCategorias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSalvar)
-                    .addComponent(jButton2)
+                    .addComponent(btnSalvarSair)
                     .addComponent(jButtonCancelarCP))
                 .addContainerGap())
         );
@@ -162,28 +169,14 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
 
     private void jButtonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSalvarActionPerformed
 
-        Produto p = new Produto();
-        ProdutoDAO dao = new ProdutoDAO();
-
-        p.setNome(jTextNomeProduto.getText());
-        Categoria c = (Categoria) jComboBox1.getSelectedItem();
-        p.setidCategoria(c.getId());
-        JOptionPane.showMessageDialog(null, "ID: "+p.getIdCategoria()+"  DESC: "+p.getNome());
-        dao.create(p);
+        addProduto();
         jTextNomeProduto.setText("");
-        jTextCategoria.setText("");
-        TelaPrincipal.cbProduto.addItem(p);
     }//GEN-LAST:event_jButtonSalvarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-       // Produto p = new Produto();
-       // ProdutoDAO dao = new ProdutoDAO();
-
-       // p.setNome(jTextNomeProduto.getText());
-       // p.setCategoria(jTextCategoria.getText());
-       // dao.create(p);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnSalvarSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarSairActionPerformed
+       addProduto();
+       this.dispose();
+    }//GEN-LAST:event_btnSalvarSairActionPerformed
 
     private void jButtonCancelarCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarCPActionPerformed
         // TODO add your handling code here:
@@ -192,25 +185,28 @@ public final class JIFCadastroProdutos2 extends javax.swing.JInternalFrame {
 
     private void jButtonNovaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNovaCategoriaActionPerformed
         // TODO add your handling code here:
-           JIFCadastroCategorias cc = new JIFCadastroCategorias();
-           cc.setVisible(true);
+           JIFCadastroCategorias cat = new JIFCadastroCategorias();
+           TelaPrincipal.jDesktopPane1.add(cat);
+           cat.setVisible(true);
     }//GEN-LAST:event_jButtonNovaCategoriaActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void cbCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbCategoriasActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_cbCategoriasActionPerformed
+
+    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnSalvarSair;
+    public static javax.swing.JComboBox<Object> cbCategorias;
     private javax.swing.JButton jButtonCancelarCP;
     private javax.swing.JButton jButtonNovaCategoria;
     private javax.swing.JButton jButtonSalvar;
-    private javax.swing.JComboBox<Object> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jTextCategoria;
     private javax.swing.JTextField jTextNomeProduto;
     // End of variables declaration//GEN-END:variables
 }

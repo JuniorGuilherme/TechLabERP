@@ -12,6 +12,15 @@ package model.bean;
 public class Produto {
     private String nome;
     private int id, idCategoria, qtd, qtd_estoque;
+    private double total_investido;
+
+    public double getTotal_investido() {
+        return total_investido;
+    }
+
+    public void setTotal_investido(double total_investido) {
+        this.total_investido = total_investido;
+    }
 
     public int getQtd() {
         return qtd;

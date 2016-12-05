@@ -37,7 +37,7 @@ public class DaoLote {
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Salvo com sucesso.");
         } catch (SQLException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DaoProduto.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             ConexaoBD.closeConnection(con, stmt);
         }
@@ -62,7 +62,7 @@ public class DaoLote {
                 
             }
         } catch (SQLException e) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(DaoProduto.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, stmt, rs);
         }
@@ -87,7 +87,7 @@ public class DaoLote {
                 
             }
         } catch (SQLException e) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(DaoProduto.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, stmt, rs);
         }
@@ -139,11 +139,11 @@ public class DaoLote {
             rs=st.executeQuery();
             jt.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException e) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(DaoProduto.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, st);
         }
-}
+    }
     
     public void readLoteProduto(JTable jt){
         Connection con = ConexaoBD.getConnection();
@@ -156,7 +156,7 @@ public class DaoLote {
             rs = st.executeQuery();
             jt.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (SQLException e) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(DaoProduto.class.getName()).log(Level.SEVERE, null, e);
         }finally{
             ConexaoBD.closeConnection(con, st);
         }
@@ -168,6 +168,23 @@ public class DaoLote {
         try {
             st=con.prepareStatement("delete from lote where id="+id);
             st.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(DaoLote.class.getName()).log(Level.SEVERE, null, e);
+        }finally{
+            ConexaoBD.closeConnection(con, st);
+        }
+    }
+    public void update(BeanLote l){
+        Connection con = ConexaoBD.getConnection();
+        PreparedStatement st = null;
+        try {
+            st=con.prepareStatement("update lote set qtd = ?, valor=?, data_lote=? where id=?;");
+            st.setInt(1, l.getQtd());
+            st.setDouble(2, l.getTotal());
+            st.setDate(3, l.getDataSql());
+            st.setInt(4, l.getId());
+            st.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Lote atualizado com sucesso.");
         } catch (SQLException e) {
             Logger.getLogger(DaoLote.class.getName()).log(Level.SEVERE, null, e);
         }finally{
